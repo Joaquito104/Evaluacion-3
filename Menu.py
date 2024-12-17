@@ -163,7 +163,13 @@ def insertar_movimiento_cuenta():
 
 # Función principal para elegir la acción a realizar
 def main():
+
+    print("\nIniciando seccion como administrador")
+    time.sleep(5)
+    print("Inicio de seccion exitoso")
+    
     while True:
+
         print("\nSelecciona una opción:")
         print("1. Insertar tipo de usuario")
         print("2. Insertar usuario")
@@ -171,7 +177,7 @@ def main():
         print("4. Insertar cuenta")
         print("5. Insertar tipo de movimiento")
         print("6. Insertar movimiento en cuenta")
-        print("7. Salir")
+        print("7. Salir del sistema y cerrar seccion")
         opcion = input("Opción: ")
 
         if opcion == '1':
@@ -187,8 +193,10 @@ def main():
         elif opcion == '6':
             insertar_movimiento_cuenta()  
         elif opcion == '7':
-            print("Saliendo...")
+            print('Saliendo del sistema...')
             time.sleep(1)
+            print("Cerrando seccion...")
+            time.sleep(2)
             print("Que tenga un exelente dia")
             time.sleep(3)
             break

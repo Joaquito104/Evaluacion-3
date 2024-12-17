@@ -2,7 +2,7 @@ Create database Banco;
 Use Banco;
 
 create table tipo_usuario (
-    id int not null auto_increment,
+    id int not null auto_increment,			/*Falta script python*/
     tipo varchar(20) not null,
     primary key (id)
 ) engine=InnoDB default charset=utf8mb3 collate=utf8mb3_spanish_ci;
@@ -10,7 +10,7 @@ create table tipo_usuario (
 create table usuarios (
     id int not null auto_increment,
     rut varchar(20) not null,
-    nombre varchar(20) not null,
+    nombre varchar(20) not null,			/*Falta script python*/
     apellido varchar(20) not null,
     correo varchar(50) not null,
     usuario varchar(20) not null,
@@ -23,14 +23,14 @@ create table usuarios (
 
 create table tipo_cuenta (
     id int not null auto_increment,
-    tipo varchar (20) not null,
+    tipo varchar (20) not null,				/*Falta script python*/
     primary key (id)
 ) engine=InnoDB default charset=utf8mb3 collate=utf8mb3_spanish_ci;
 
 create table cuentas (
     id int not null auto_increment,
     usuario int not null,
-    tipo int not null,
+    tipo int not null,					/*En proceso de script*/
     saldo float not null,
     primary key (id),
     key usuario (usuario),
@@ -41,13 +41,13 @@ create table cuentas (
 
 create table tipo_movimiento (
     id int not null auto_increment,
-    tipo varchar (20) not null,
+    tipo varchar (20) not null,				/*Falta script python*/
     primary key (id)
 ) engine=InnoDB default charset=utf8mb3 collate=utf8mb3_spanish_ci;
 
 create table movimientos_cuenta (
     id int not null auto_increment,
-    cuenta int not null,
+    cuenta int not null,					/*Falta script python*/
     movimiento int not null,
     monto float not null,
     primary key (id),
@@ -56,3 +56,5 @@ create table movimientos_cuenta (
     constraint cuenta_usuario foreign key (cuenta) references cuentas (id),
     constraint tipo_movimiento_cuenta foreign key (movimiento) references tipo_movimiento (id)
 ) engine=InnoDB default charset=utf8mb3 collate=utf8mb3_spanish_ci;
+
+select * from tipo_usuario;

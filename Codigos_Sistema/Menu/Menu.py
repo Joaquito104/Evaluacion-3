@@ -1,5 +1,6 @@
 import mysql.connector as mysql
 import bcrypt
+import time
 
 # Función para establecer la conexión con la base de datos
 def conexion():
@@ -41,6 +42,12 @@ def insertar_tipo_usuario():
 
 # Función para insertar usuario
 def insertar_usuario():
+    print('Estimado. Para que pueda funcionar esta opción, necesita primero crear el tipo de usuario.')
+    regreso = input('Si necesita volver ingrese "si". En caso contrario, teclee cualquier cosa para continuar \n')
+
+    if regreso.lower() == 'si' or regreso.lower() == 's':
+        pass  
+
     rut = input('Ingrese rut: ')
     nombre = input('Ingrese nombre: ')			
     apellido = input('Ingrese apellido: ')
@@ -87,6 +94,12 @@ def insertar_tipo_cuenta():
 
 # Función para insertar cuenta
 def insertar_cuenta():
+    print('Estimado. Para que pueda funcionar esta opción, necesita primero crear los datos de tipo cuenta y los usuarios.')
+    regreso = input('Si necesita volver ingrese "si". En caso contrario, teclee cualquier cosa para continuar \n')
+
+    if regreso.lower() == 'si' or regreso.lower() == 's':
+        pass 
+
     usuario_id = int(input('Ingrese ID del usuario: '))
     tipo_cuenta_id = int(input('Ingrese ID del tipo de cuenta: '))
     saldo = float(input('Ingrese el saldo: '))
@@ -125,6 +138,11 @@ def insertar_tipo_movimiento():
 
 # Función para insertar movimiento en cuenta
 def insertar_movimiento_cuenta():
+    print('Estimado. Para que pueda funcionar esta opción, necesita primero crear los datos de tipo cuenta y los usuarios.')
+    regreso = input('Si necesita volver ingrese "si". En caso contrario, teclee cualquier cosa para continuar \n')
+
+    if regreso.lower() == 'si' or regreso.lower() == 's':
+        pass  
     cuenta_id = int(input('Ingrese ID de la cuenta: '))
     tipo_movimiento_id = int(input('Ingrese ID del tipo de movimiento: '))
     monto = float(input('Ingrese el monto del movimiento: '))
@@ -157,23 +175,25 @@ def main():
         opcion = input("Opción: ")
 
         if opcion == '1':
-            insertar_tipo_usuario()  # Insertar tipo de usuario
+            insertar_tipo_usuario()  
         elif opcion == '2':
-            insertar_usuario()  # Insertar usuario
+            insertar_usuario()  
         elif opcion == '3':
-            insertar_tipo_cuenta()  # Insertar tipo de cuenta
+            insertar_tipo_cuenta()  
         elif opcion == '4':
-            insertar_cuenta()  # Insertar cuenta
+            insertar_cuenta()  
         elif opcion == '5':
-            insertar_tipo_movimiento()  # Insertar tipo de movimiento
+            insertar_tipo_movimiento()  
         elif opcion == '6':
-            insertar_movimiento_cuenta()  # Insertar movimiento en cuenta
+            insertar_movimiento_cuenta()  
         elif opcion == '7':
             print("Saliendo...")
+            time.sleep(1)
+            print("Que tenga un exelente dia")
+            time.sleep(3)
             break
         else:
             print("Opción no válida. Intenta de nuevo.")
 
-# Llamar a la función principal
-if __name__ == "__main__":
-    main()
+#Ejecuta la funcion
+main()

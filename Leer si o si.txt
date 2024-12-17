@@ -3,4 +3,4 @@ Hola profe, este archivo de texto solucionara sus inquietudes
 1. EN CASO DE QUE NO FUNCIONA ACTUALIZA EL INSTALADOR PIP A LA VERSION MAS RECIENTE: 
         Asi se solucionara el problema de plugins
         
-2.-
+2.- No se porque pero no puedo usar los hash porque son muy grandes y la base de datos no me lo acepta

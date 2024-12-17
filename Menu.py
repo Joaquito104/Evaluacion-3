@@ -161,24 +161,24 @@ def insertar_movimiento_cuenta():
     except Exception as e:
         print(f"Error al ejecutar la consulta: {e}")
 
-# Función principal para elegir la acción a realizar
-def main():
 
-    print("\nIniciando seccion como administrador")
+# Función principal para elegir la acción a realizar
+def Administrador():
+
     time.sleep(5)
     print("Inicio de seccion exitoso")
     
     while True:
 
         print("\nSelecciona una opción:")
-        print("1. Insertar tipo de usuario")
-        print("2. Insertar usuario")
-        print("3. Insertar tipo de cuenta")
-        print("4. Insertar cuenta")
-        print("5. Insertar tipo de movimiento")
-        print("6. Insertar movimiento en cuenta")
+        print("1. Añadir tipo de usuario")
+        print("2. Añadir usuario")
+        print("3. Añadir tipo de cuenta")
+        print("4. Añadir cuenta")
+        print("5. Añadir tipo de movimiento")
+        print("6. Añadir movimiento en cuenta")
         print("7. Salir del sistema y cerrar seccion")
-        opcion = input("Opción: ")
+        opcion = input("Ingrese porfavor: ")
 
         if opcion == '1':
             insertar_tipo_usuario()  
@@ -193,15 +193,67 @@ def main():
         elif opcion == '6':
             insertar_movimiento_cuenta()  
         elif opcion == '7':
-            print('Saliendo del sistema...')
-            time.sleep(1)
             print("Cerrando seccion...")
-            time.sleep(2)
+            time.sleep(1)
             print("Que tenga un exelente dia")
             time.sleep(3)
             break
         else:
             print("Opción no válida. Intenta de nuevo.")
 
-#Ejecuta la funcion
+
+def usuario():
+
+    print("Inicio de seccion exitoso")
+    time.sleep(1)
+    print("Hola estimado usuario, Bienvenido al sistema")
+
+    while True:
+        print("\nSelecciona una opción:")
+        print("1. Crear usuario")
+        print("2. Crear cuenta")
+        print("3. Realizar Movimiento")
+        print("4. Salir del sistema y cerrar seccion")
+
+        opcion = input("Ingrese porfavor: ")
+
+        if opcion == '1':
+            #Añadir funcion
+            pass 
+        elif opcion == '2':
+            #Añadir funcion
+            pass
+        elif opcion == '3':
+            #Añadir Funcion
+            pass
+        elif opcion == '4':
+          
+            print("Cerrando seccion...")
+            time.sleep(1)
+            print("Que tenga un exelente dia")
+            time.sleep(3)
+            break
+        else:
+            print("Opción no válida. Intenta de nuevo.")
+
+        
+
+
+#Ejecucion de funciones
+def main():
+
+    print("Hola estimado administrador, Bienvenido al sistema del banco ")
+
+    Seccion = input("Ingrese 1 para Iniciar seccion como administrador. Ingrese 2 para iniciar seccion como usuario. En caso cerrar el sistema ingrese cualquier cosa diferente")
+
+    if Seccion == "1":
+        Administrador()
+    
+    elif Seccion == "2":
+        #Usuario()
+        pass
+    else:
+        print('Saliendo del sistema...')
+        time.sleep(1)
+
 main()

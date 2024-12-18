@@ -44,4 +44,4 @@ Seleccione una opción: 5
 
 Finalmente se confirmo el query 
 
-3.- Como señale anteriormente
+3.- Se hizo un query aparte en la creación de cuentas debido a las restricciones de las claves foráneas de la base de datos, por ejemplo la tabla usuarios necesita tener un tipo (que este caso es un id de tipo int) por lo que el query aparte hace una inserción aparte para poder proceder y no generar problemas

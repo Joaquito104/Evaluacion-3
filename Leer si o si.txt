@@ -2,5 +2,46 @@ Hola, este archivo de texto solucionara sus inquietudes
 
 1. EN CASO DE QUE NO FUNCIONA ACTUALIZA EL INSTALADOR PIP A LA VERSION MAS RECIENTE: 
         Asi se solucionara el problema de plugins
-        
+2.- Claramente se podría hacer mas consultas a toda la base de datos, pero no es necesario ya que lo importante es la seguridad de las consultas asi que me enfoque en una exclusivamente 
 
+ejemplo en la ejecucion
+
+Bienvenido al sistema
+Ingrese su rol (Administrador/Usuario): Administrador
+
+Menú de Administrador
+1. Gestionar Usuarios
+2. Gestionar Tipos de Cuenta
+3. Gestionar Tipos de Movimiento
+4. Gestionar Tipos de Usuario
+5. Salir
+Seleccione una opción: 1
+
+Gestión de Tipos de Usuario
+1. Crear Tipo de Usuario
+2. Actualizar Tipo de Usuario
+3. Eliminar Tipo de Usuario
+4. Volver al menú anterior
+Seleccione una opción: 1
+Ingrese el nombre del nuevo tipo de usuario: nose
+Conectado a la base de datos.
+Tipo de usuario creado correctamente.
+
+Gestión de Tipos de Usuario
+1. Crear Tipo de Usuario
+2. Actualizar Tipo de Usuario
+3. Eliminar Tipo de Usuario
+4. Volver al menú anterior
+Seleccione una opción: 4
+
+Menú de Administrador
+1. Gestionar Usuarios
+2. Gestionar Tipos de Cuenta
+3. Gestionar Tipos de Movimiento
+4. Gestionar Tipos de Usuario
+5. Salir
+Seleccione una opción: 5
+
+Finalmente se confirmo el query 
+
+3.- Como señale anteriormente

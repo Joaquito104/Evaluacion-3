@@ -1,212 +1,339 @@
 import mysql.connector as mysql
 import bcrypt
-import time
 
 # Función para establecer la conexión con la base de datos
 def conexion():
     try:
-        conexion = mysql.connect(
+        con = mysql.connect(
             host="127.0.0.1",
             user="root",
             password="Inacap.2024",
             database="Banco"
         )
-        if conexion.is_connected():
+        if con.is_connected():
             print("Conectado a la base de datos.")
-            return conexion
+            return con
         else:
             print("No se pudo conectar a la base de datos.")
-            return None  # Retornar None si no se pudo conectar
+            return None
     except Exception as e:
         print(f"Error al conectar a la base de datos: {e}")
         return None
 
-# Clase Usuario con atributos específicos de un usuario
-class Usuario:
-    def __init__(self, rut, nombre, apellido, correo, usuario, tipo_usuario_id, clave):
-        self.rut = rut
-        self.nombre = nombre
-        self.apellido = apellido
-        self.correo = correo
-        self.usuario = usuario
-        self.tipo_usuario_id = tipo_usuario_id
-        self.clave = clave
-    
-    def insertar(self):
-        clave_hash = bcrypt.hashpw(self.clave.encode('utf-8'), bcrypt.gensalt())
-        try:
-            conector = conexion()
-            if conector:
-                cursor = conector.cursor()
-                query = """
-                INSERT INTO Banco.usuarios (rut, nombre, apellido, correo, usuario, clave, tipo) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """
-                cursor.execute(query, (self.rut, self.nombre, self.apellido, self.correo, self.usuario, clave_hash, self.tipo_usuario_id))
-                conector.commit()
-                print("Usuario insertado correctamente.")
-                cursor.close()
-                conector.close()
-            else:
-                print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
-        except Exception as e:
-            print(f"Error al ejecutar la consulta: {e}")
 
-# Clase Administrador con métodos para gestionar el sistema del banco
-class Administrador:
-    def __init__(self, nombre, rol):
-        self.nombre = nombre
-        self.rol = rol
-    
-    def insertar_tipo_usuario(self, tipo):
-        try:
-            conector = conexion()
-            if conector:
-                cursor = conector.cursor()
-                query = "INSERT INTO Banco.tipo_usuario (tipo) VALUES (%s)"
-                cursor.execute(query, (tipo,))
-                conector.commit()
-                print("Tipo de usuario insertado correctamente.")
-                cursor.close()
-                conector.close()
-            else:
-                print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
-        except Exception as e:
-            print(f"Error al ejecutar la consulta: {e}")
+class Banco:
+    def __init__(self):
+        self.usuario = None
 
-    def insertar_tipo_cuenta(self, tipo):
-        try:
-            conector = conexion()
-            if conector:
-                cursor = conector.cursor()
-                query = "INSERT INTO Banco.tipo_cuenta (tipo) VALUES (%s)"
-                cursor.execute(query, (tipo,))
-                conector.commit()
-                print("Tipo de cuenta insertado correctamente.")
-                cursor.close()
-                conector.close()
-            else:
-                print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
-        except Exception as e:
-            print(f"Error al ejecutar la consulta: {e}")
+    # Clase base Usuario
+    class Usuario:
+        def __init__(self, rut, nombre, apellido, correo, usuario, clave, tipo_usuario):
+            self.rut = rut
+            self.nombre = nombre
+            self.apellido = apellido
+            self.correo = correo
+            self.usuario = usuario
+            self.clave = clave
+            self.tipo_usuario = tipo_usuario
 
-    def insertar_cuenta(self, usuario_id, tipo_cuenta_id, saldo):
-        try:
-            conector = conexion()
-            if conector:
-                cursor = conector.cursor()
-                query = "INSERT INTO Banco.cuentas (usuario, tipo, saldo) VALUES (%s, %s, %s)"
-                cursor.execute(query, (usuario_id, tipo_cuenta_id, saldo))
-                conector.commit()
-                print("Cuenta insertada correctamente.")
+        # Método para registrar un nuevo usuario
+        def registrar_usuario(self):
+            clave_hash = bcrypt.hashpw(self.clave.encode('utf-8'), bcrypt.gensalt())
+            con = conexion()
+            if con:
+                cursor = con.cursor()
+                query = "INSERT INTO usuarios (rut, nombre, apellido, correo, usuario, clave, tipo) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                cursor.execute(query, (self.rut, self.nombre, self.apellido, self.correo, self.usuario, clave_hash, self.tipo_usuario))
+                con.commit()
                 cursor.close()
-                conector.close()
+                con.close()
+                print("Usuario registrado correctamente.")
             else:
-                print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
-        except Exception as e:
-            print(f"Error al ejecutar la consulta: {e}")
+                print("No se pudo conectar a la base de datos.")
 
-    def insertar_tipo_movimiento(self, tipo):
-        try:
-            conector = conexion()
-            if conector:
-                cursor = conector.cursor()
-                query = "INSERT INTO Banco.tipo_movimiento (tipo) VALUES (%s)"
-                cursor.execute(query, (tipo,))
-                conector.commit()
-                print("Tipo de movimiento insertado correctamente.")
+        # Método para crear una cuenta para el usuario
+        def crear_cuenta(self, tipo_cuenta, saldo_inicial):
+            con = conexion()
+            if con:
+                cursor = con.cursor()
+                query = "INSERT INTO cuentas (usuario, tipo, saldo) VALUES (%s, %s, %s)"
+                cursor.execute(query, (self.rut, tipo_cuenta, saldo_inicial))
+                con.commit()
                 cursor.close()
-                conector.close()
+                con.close()
+                print("Cuenta creada correctamente.")
             else:
-                print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
-        except Exception as e:
-            print(f"Error al ejecutar la consulta: {e}")
+                print("No se pudo conectar a la base de datos.")
 
-    def insertar_movimiento_cuenta(self, cuenta_id, tipo_movimiento_id, monto):
-        try:
-            conector = conexion()
-            if conector:
-                cursor = conector.cursor()
-                query = "INSERT INTO Banco.movimientos_cuenta (cuenta, movimiento, monto) VALUES (%s, %s, %s)"
-                cursor.execute(query, (cuenta_id, tipo_movimiento_id, monto))
-                conector.commit()
-                print("Movimiento insertado correctamente.")
+        # Método para ver las cuentas del usuario
+        def ver_cuentas(self):
+            con = conexion()
+            if con:
+                cursor = con.cursor()
+                query = "SELECT * FROM cuentas WHERE usuario = %s"
+                cursor.execute(query, (self.rut,))
+                for cuenta in cursor.fetchall():
+                    print(f"ID: {cuenta[0]}, Tipo: {cuenta[2]}, Saldo: {cuenta[3]}")
                 cursor.close()
-                conector.close()
+                con.close()
             else:
-                print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
-        except Exception as e:
-            print(f"Error al ejecutar la consulta: {e}")
-
-    def mostrar_menu(self):
-        time.sleep(5)
-        print("Inicio de sección exitoso")
+                print("No se pudo conectar a la base de datos.")
         
-        while True:
-            print("\nSelecciona una opción:")
-            print("1. Añadir tipo de usuario")
-            print("2. Añadir usuario")
-            print("3. Añadir tipo de cuenta")
-            print("4. Añadir cuenta")
-            print("5. Añadir tipo de movimiento")
-            print("6. Añadir movimiento en cuenta")
-            print("7. Salir del sistema y cerrar sección")
-            opcion = input("Ingrese por favor: ")
+        # Método para actualizar los datos del usuario
+        def actualizar_usuario(self):
+            conn = conexion()
+            if conn:
+                cursor = conn.cursor()
+                
+                # Verificar si el tipo de usuario existe en la tabla tipo_usuario
+                query_verificar_tipo = "SELECT COUNT(*) FROM tipo_usuario WHERE id = %s"
+                cursor.execute(query_verificar_tipo, (self.tipo_usuario,))
+                tipo_existente = cursor.fetchone()[0]
+                
+                if tipo_existente == 0:
+                    print("El tipo de usuario no existe en la base de datos.")
+                    cursor.close()
+                    conn.close()
+                    return
+                
+                # Si el tipo existe, proceder con la actualización del usuario
+                query = "UPDATE usuarios SET nombre = %s, correo = %s, tipo = %s WHERE rut = %s"
+                cursor.execute(query, (self.nombre, self.correo, self.tipo_usuario, self.rut))
+                conn.commit()
+                
+                cursor.close()
+                conn.close()
+                print("Datos del usuario actualizados correctamente.")
+            else:
+                print("No se pudo conectar a la base de datos.")
 
-            if opcion == '1':
-                tipo = input('Ingrese el tipo de usuario: ')
-                self.insertar_tipo_usuario(tipo)  
-            elif opcion == '2':
-                rut = input('Ingrese rut: ')
-                nombre = input('Ingrese nombre: ')			
-                apellido = input('Ingrese apellido: ')
-                correo = input('Ingrese correo: ')
-                usuario = input('Ingrese nombre de usuario: ')
-                tipo_usuario_id = int(input('Ingrese ID del tipo de usuario: '))
-                clave = input('Ingrese clave: ')
-                usuario = Usuario(rut, nombre, apellido, correo, usuario, tipo_usuario_id, clave)
-                usuario.insertar()
-            elif opcion == '3':
-                tipo = input('Ingrese el tipo de cuenta: ')
-                self.insertar_tipo_cuenta(tipo)  
-            elif opcion == '4':
-                usuario_id = int(input('Ingrese ID del usuario: '))
-                tipo_cuenta_id = int(input('Ingrese ID del tipo de cuenta: '))
-                saldo = float(input('Ingrese el saldo: '))
-                self.insertar_cuenta(usuario_id, tipo_cuenta_id, saldo)  
-            elif opcion == '5':
-                tipo = input('Ingrese el tipo de movimiento: ')
-                self.insertar_tipo_movimiento(tipo)  
-            elif opcion == '6':
-                cuenta_id = int(input('Ingrese ID de la cuenta: '))
-                tipo_movimiento_id = int(input('Ingrese ID del tipo de movimiento: '))
-                monto = float(input('Ingrese el monto del movimiento: '))
-                self.insertar_movimiento_cuenta(cuenta_id, tipo_movimiento_id, monto)  
-            elif opcion == '7':
-                print("Cerrando sección...")
-                time.sleep(1)
-                print("Que tenga un excelente día")
-                time.sleep(3)
+
+        # Método para eliminar un usuario
+        def eliminar_usuario(self):
+            con = conexion()
+            if con:
+                cursor = con.cursor()
+                query = "DELETE FROM usuarios WHERE rut = %s"
+                cursor.execute(query, (self.rut,))
+                con.commit()
+                cursor.close()
+                con.close()
+                print("Usuario eliminado correctamente.")
+            else:
+                print("No se pudo conectar a la base de datos.")
+
+
+    # Funciones de Menú para el Usuario
+    def menu_usuario(self, usuario):
+        while True:
+            print("\nMenú de Usuario")
+            print("1. Crear cuenta")
+            print("2. Ver mis cuentas")
+            print("3. Cambiar mis datos")
+            print("4. Salir")
+            opcion = input("Seleccione una opción: ")
+
+            if opcion == "1":
+                tipo_cuenta = input("Ingrese el tipo de cuenta: ")
+                saldo_inicial = float(input("Ingrese el saldo inicial: "))
+                usuario.crear_cuenta(tipo_cuenta, saldo_inicial)
+
+            elif opcion == "2":
+                usuario.ver_cuentas()
+
+            elif opcion == "3":
+                nombre = input("Ingrese su nuevo nombre: ")
+                correo = input("Ingrese su nuevo correo: ")
+                usuario.nombre = nombre
+                usuario.correo = correo
+                usuario.actualizar_usuario()
+
+            elif opcion == "4":
                 break
             else:
-                print("Opción no válida. Intenta de nuevo.")
+                print("Opción no válida.")
 
-# Función principal para elegir la acción a realizar
-def main():
-    print("Hola estimado administrador, Bienvenido al sistema del banco ")
 
-    Seccion = input("Ingrese 1 para Iniciar sección como administrador.\n Ingrese 2 para iniciar sección como usuario.\n En caso de cerrar el sistema ingrese cualquier cosa diferente\n")
+    # Funciones para gestionar Tipos de Usuario
+    def gestionar_tipo_usuario(self):
+        while True:
+            print("\nGestión de Tipos de Usuario")
+            print("1. Crear Tipo de Usuario")
+            print("2. Actualizar Tipo de Usuario")
+            print("3. Eliminar Tipo de Usuario")
+            print("4. Volver al menú anterior")
+            opcion = input("Seleccione una opción: ")
 
-    if Seccion == "1":
-        nombre_admin = input('Ingrese el nombre del administrador: ')
-        admin = Administrador(nombre_admin, 'Administrador')
-        admin.mostrar_menu()
-    
-    elif Seccion == "2":
-        # Aquí se podría implementar la lógica de usuario
-        pass
-    else:
-        print('Saliendo del sistema...')
-        time.sleep(1)
+            if opcion == "1":
+                tipo = input("Ingrese el nombre del nuevo tipo de usuario: ")
+                con = conexion()
+                if con:
+                    cursor = con.cursor()
+                    query = "INSERT INTO tipo_usuario (tipo) VALUES (%s)"
+                    cursor.execute(query, (tipo,))
+                    con.commit()
+                    cursor.close()
+                    con.close()
+                    print("Tipo de usuario creado correctamente.")
+            elif opcion == "2":
+                id_tipo = input("Ingrese el ID del tipo de usuario a actualizar: ")
+                nuevo_tipo = input("Ingrese el nuevo nombre para el tipo de usuario: ")
+                con = conexion()
+                if con:
+                    cursor = con.cursor()
+                    query = "UPDATE tipo_usuario SET tipo = %s WHERE id = %s"
+                    cursor.execute(query, (nuevo_tipo, id_tipo))
+                    con.commit()
+                    cursor.close()
+                    con.close()
+                    print("Tipo de usuario actualizado correctamente.")
+            elif opcion == "3":
+                id_tipo = input("Ingrese el ID del tipo de usuario a eliminar: ")
+                con = conexion()
+                if con:
+                    cursor = con.cursor()
+                    query = "DELETE FROM tipo_usuario WHERE id = %s"
+                    cursor.execute(query, (id_tipo,))
+                    con.commit()
+                    cursor.close()
+                    con.close()
+                    print("Tipo de usuario eliminado correctamente.")
+            elif opcion == "4":
+                break
+            else:
+                print("Opción no válida.")
 
-main()
+    # Funciones para gestionar Tipos de Cuenta
+    def gestionar_tipo_cuenta(self):
+        while True:
+            print("\nGestión de Tipos de Cuenta")
+            print("1. Crear Tipo de Cuenta")
+            print("2. Actualizar Tipo de Cuenta")
+            print("3. Eliminar Tipo de Cuenta")
+            print("4. Volver al menú anterior")
+            opcion = input("Seleccione una opción: ")
+
+            if opcion == "1":
+                tipo = input("Ingrese el nombre del nuevo tipo de cuenta: ")
+                con = conexion()
+                if con:
+                    cursor = con.cursor()
+                    query = "INSERT INTO tipo_cuenta (tipo) VALUES (%s)"
+                    cursor.execute(query, (tipo,))
+                    con.commit()
+                    cursor.close()
+                    con.close()
+                    print("Tipo de cuenta creado correctamente.")
+            elif opcion == "2":
+                id_tipo = input("Ingrese el ID del tipo de cuenta a actualizar: ")
+                nuevo_tipo = input("Ingrese el nuevo nombre para el tipo de cuenta: ")
+                con = conexion()
+                if con:
+                    cursor = con.cursor()
+                    query = "UPDATE tipo_cuenta SET tipo = %s WHERE id = %s"
+                    cursor.execute(query, (nuevo_tipo, id_tipo))
+                    con.commit()
+                    cursor.close()
+                    con.close()
+                    print("Tipo de cuenta actualizado correctamente.")
+            elif opcion == "3":
+                id_tipo = input("Ingrese el ID del tipo de cuenta a eliminar: ")
+                con = conexion()
+                if con:
+                    cursor = con.cursor()
+                    query = "DELETE FROM tipo_cuenta WHERE id = %s"
+                    cursor.execute(query, (id_tipo,))
+                    con.commit()
+                    cursor.close()
+                    con.close()
+                    print("Tipo de cuenta eliminado correctamente.")
+            elif opcion == "4":
+                break
+            else:
+                print("Opción no válida.")
+
+    # Funciones para gestionar Tipos de Movimiento
+    def gestionar_tipo_movimiento(self):
+        while True:
+            print("\nGestión de Tipos de Movimiento")
+            print("1. Crear Tipo de Movimiento")
+            print("2. Actualizar Tipo de Movimiento")
+            print("3. Eliminar Tipo de Movimiento")
+            print("4. Volver al menú anterior")
+            opcion = input("Seleccione una opción: ")
+
+            if opcion == "1":
+                tipo = input("Ingrese el nombre del nuevo tipo de movimiento: ")
+                con = conexion()
+                if con:
+                    cursor = con.cursor()
+                    query = "INSERT INTO tipo_movimiento (tipo) VALUES (%s)"
+                    cursor.execute(query, (tipo,))
+                    con.commit()
+                    cursor.close()
+                    con.close()
+                    print("Tipo de movimiento creado correctamente.")
+            elif opcion == "2":
+                id_tipo = input("Ingrese el ID del tipo de movimiento a actualizar: ")
+                nuevo_tipo = input("Ingrese el nuevo nombre para el tipo de movimiento: ")
+                con = conexion()
+                if con:
+                    cursor = con.cursor()
+                    query = "UPDATE tipo_movimiento SET tipo = %s WHERE id = %s"
+                    cursor.execute(query, (nuevo_tipo, id_tipo))
+                    con.commit()
+                    cursor.close()
+                    con.close()
+                    print("Tipo de movimiento actualizado correctamente.")
+            elif opcion == "3":
+                id_tipo = input("Ingrese el ID del tipo de movimiento a eliminar: ")
+                con = conexion()
+                if con:
+                    cursor = con.cursor()
+                    query = "DELETE FROM tipo_movimiento WHERE id = %s"
+                    cursor.execute(query, (id_tipo,))
+                    con.commit()
+                    cursor.close()
+                    con.close()
+                    print("Tipo de movimiento eliminado correctamente.")
+            elif opcion == "4":
+                break
+            else:
+                print("Opción no válida.")
+
+    # Funciones de Menú para el Administrador
+    def menu_administrador(self):
+        while True:
+            print("\nMenú de Administrador")
+            print("1. Gestionar Usuarios")
+            print("2. Gestionar Tipos de Cuenta")
+            print("3. Gestionar Tipos de Movimiento")
+            print("4. Gestionar Tipos de Usuario")
+            print("5. Salir")
+            opcion = input("Seleccione una opción: ")
+
+            if opcion == "1":
+                self.gestionar_tipo_usuario()  # Corregido aquí
+            elif opcion == "2":
+                self.gestionar_tipo_cuenta()
+            elif opcion == "3":
+                self.gestionar_tipo_movimiento()
+            elif opcion == "4":
+                self.gestionar_tipo_usuario()
+            elif opcion == "5":
+                break
+            else:
+                print("Opción no válida.")
+
+    # Función Principal
+    def main(self):
+        print("Bienvenido al sistema")
+        rol = input("Ingrese su rol (Administrador/Usuario): ").strip().lower()
+
+        if rol == "administrador":
+            self.menu_administrador()
+        elif rol == "usuario":
+            rut = input("Ingrese su rut: ").strip()
+
+        else:
+            print("Rol no válido.")

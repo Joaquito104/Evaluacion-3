@@ -11,10 +11,9 @@ def conexion():
             password="Inacap.2024",
             database="Banco"
         )
-
         if conexion.is_connected():
             print("Conectado a la base de datos.")
-            return conexion  
+            return conexion
         else:
             print("No se pudo conectar a la base de datos.")
             return None  # Retornar None si no se pudo conectar
@@ -22,235 +21,189 @@ def conexion():
         print(f"Error al conectar a la base de datos: {e}")
         return None
 
-# Función para insertar tipo de usuario
-def insertar_tipo_usuario():
-    tipo = input('Ingrese el tipo de usuario: ')
-    try:
-        conector = conexion()
-        if conector:
-            cursor = conector.cursor()
-            query = "INSERT INTO Banco.tipo_usuario (tipo) VALUES (%s)"
-            cursor.execute(query, (tipo,))
-            conector.commit()
-            print("Tipo de usuario insertado correctamente.")
-            cursor.close()
-            conector.close()
-        else:
-            print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
-    except Exception as e:
-        print(f"Error al ejecutar la consulta: {e}")
+# Clase Usuario con atributos específicos de un usuario
+class Usuario:
+    def __init__(self, rut, nombre, apellido, correo, usuario, tipo_usuario_id, clave):
+        self.rut = rut
+        self.nombre = nombre
+        self.apellido = apellido
+        self.correo = correo
+        self.usuario = usuario
+        self.tipo_usuario_id = tipo_usuario_id
+        self.clave = clave
+    
+    def insertar(self):
+        clave_hash = bcrypt.hashpw(self.clave.encode('utf-8'), bcrypt.gensalt())
+        try:
+            conector = conexion()
+            if conector:
+                cursor = conector.cursor()
+                query = """
+                INSERT INTO Banco.usuarios (rut, nombre, apellido, correo, usuario, clave, tipo) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """
+                cursor.execute(query, (self.rut, self.nombre, self.apellido, self.correo, self.usuario, clave_hash, self.tipo_usuario_id))
+                conector.commit()
+                print("Usuario insertado correctamente.")
+                cursor.close()
+                conector.close()
+            else:
+                print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
+        except Exception as e:
+            print(f"Error al ejecutar la consulta: {e}")
 
-# Función para insertar usuario
-def insertar_usuario():
-    print('Estimado. Para que pueda funcionar esta opción, necesita primero crear el tipo de usuario.')
-    regreso = input('Si necesita volver ingrese "si". En caso contrario, teclee cualquier cosa para continuar \n')
+# Clase Administrador con métodos para gestionar el sistema del banco
+class Administrador:
+    def __init__(self, nombre, rol):
+        self.nombre = nombre
+        self.rol = rol
+    
+    def insertar_tipo_usuario(self, tipo):
+        try:
+            conector = conexion()
+            if conector:
+                cursor = conector.cursor()
+                query = "INSERT INTO Banco.tipo_usuario (tipo) VALUES (%s)"
+                cursor.execute(query, (tipo,))
+                conector.commit()
+                print("Tipo de usuario insertado correctamente.")
+                cursor.close()
+                conector.close()
+            else:
+                print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
+        except Exception as e:
+            print(f"Error al ejecutar la consulta: {e}")
 
-    if regreso.lower() == 'si' or regreso.lower() == 's':
-        pass  
+    def insertar_tipo_cuenta(self, tipo):
+        try:
+            conector = conexion()
+            if conector:
+                cursor = conector.cursor()
+                query = "INSERT INTO Banco.tipo_cuenta (tipo) VALUES (%s)"
+                cursor.execute(query, (tipo,))
+                conector.commit()
+                print("Tipo de cuenta insertado correctamente.")
+                cursor.close()
+                conector.close()
+            else:
+                print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
+        except Exception as e:
+            print(f"Error al ejecutar la consulta: {e}")
 
-    rut = input('Ingrese rut: ')
-    nombre = input('Ingrese nombre: ')			
-    apellido = input('Ingrese apellido: ')
-    correo = input('Ingrese correo: ')
-    usuario = input('Ingrese nombre de usuario: ')
-    tipo_usuario_id = int(input('Ingrese ID del tipo de usuario: '))  # Usar el ID de tipo_usuario
-    clave = input('Ingrese clave: ').encode('utf-8')
-    clave_hash = bcrypt.hashpw(clave, bcrypt.gensalt())
-    try:
-        conector = conexion()
-        if conector:
-            cursor = conector.cursor()
-            query = """
-            INSERT INTO Banco.usuarios (rut, nombre, apellido, correo, usuario, clave, tipo) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """
-            cursor.execute(query, (rut, nombre, apellido, correo, usuario, clave_hash, tipo_usuario_id))
-            conector.commit()
-            print("Usuario insertado correctamente.")
-            cursor.close()
-            conector.close()
-        else:
-            print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
-    except Exception as e:
-        print(f"Error al ejecutar la consulta: {e}")
+    def insertar_cuenta(self, usuario_id, tipo_cuenta_id, saldo):
+        try:
+            conector = conexion()
+            if conector:
+                cursor = conector.cursor()
+                query = "INSERT INTO Banco.cuentas (usuario, tipo, saldo) VALUES (%s, %s, %s)"
+                cursor.execute(query, (usuario_id, tipo_cuenta_id, saldo))
+                conector.commit()
+                print("Cuenta insertada correctamente.")
+                cursor.close()
+                conector.close()
+            else:
+                print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
+        except Exception as e:
+            print(f"Error al ejecutar la consulta: {e}")
 
-# Función para insertar tipo de cuenta
-def insertar_tipo_cuenta():
-    tipo = input('Ingrese el tipo de cuenta: ')
-    try:
-        conector = conexion()
-        if conector:
-            cursor = conector.cursor()
-            query = "INSERT INTO Banco.tipo_cuenta (tipo) VALUES (%s)"
-            cursor.execute(query, (tipo,))
-            conector.commit()
-            print("Tipo de cuenta insertado correctamente.")
-            cursor.close()
-            conector.close()
-        else:
-            print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
-    except Exception as e:
-        print(f"Error al ejecutar la consulta: {e}")
+    def insertar_tipo_movimiento(self, tipo):
+        try:
+            conector = conexion()
+            if conector:
+                cursor = conector.cursor()
+                query = "INSERT INTO Banco.tipo_movimiento (tipo) VALUES (%s)"
+                cursor.execute(query, (tipo,))
+                conector.commit()
+                print("Tipo de movimiento insertado correctamente.")
+                cursor.close()
+                conector.close()
+            else:
+                print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
+        except Exception as e:
+            print(f"Error al ejecutar la consulta: {e}")
 
-# Función para insertar cuenta
-def insertar_cuenta():
-    print('Estimado. Para que pueda funcionar esta opción, necesita primero crear los datos de tipo cuenta y los usuarios.')
-    regreso = input('Si necesita volver ingrese "si". En caso contrario, teclee cualquier cosa para continuar \n')
+    def insertar_movimiento_cuenta(self, cuenta_id, tipo_movimiento_id, monto):
+        try:
+            conector = conexion()
+            if conector:
+                cursor = conector.cursor()
+                query = "INSERT INTO Banco.movimientos_cuenta (cuenta, movimiento, monto) VALUES (%s, %s, %s)"
+                cursor.execute(query, (cuenta_id, tipo_movimiento_id, monto))
+                conector.commit()
+                print("Movimiento insertado correctamente.")
+                cursor.close()
+                conector.close()
+            else:
+                print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
+        except Exception as e:
+            print(f"Error al ejecutar la consulta: {e}")
 
-    if regreso.lower() == 'si' or regreso.lower() == 's':
-        pass 
+    def mostrar_menu(self):
+        time.sleep(5)
+        print("Inicio de sección exitoso")
+        
+        while True:
+            print("\nSelecciona una opción:")
+            print("1. Añadir tipo de usuario")
+            print("2. Añadir usuario")
+            print("3. Añadir tipo de cuenta")
+            print("4. Añadir cuenta")
+            print("5. Añadir tipo de movimiento")
+            print("6. Añadir movimiento en cuenta")
+            print("7. Salir del sistema y cerrar sección")
+            opcion = input("Ingrese por favor: ")
 
-    usuario_id = int(input('Ingrese ID del usuario: '))
-    tipo_cuenta_id = int(input('Ingrese ID del tipo de cuenta: '))
-    saldo = float(input('Ingrese el saldo: '))
-    try:
-        conector = conexion()
-        if conector:
-            cursor = conector.cursor()
-            query = "INSERT INTO Banco.cuentas (usuario, tipo, saldo) VALUES (%s, %s, %s)"
-            cursor.execute(query, (usuario_id, tipo_cuenta_id, saldo))
-            conector.commit()
-            print("Cuenta insertada correctamente.")
-            cursor.close()
-            conector.close()
-        else:
-            print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
-    except Exception as e:
-        print(f"Error al ejecutar la consulta: {e}")
-
-# Función para insertar tipo de movimiento
-def insertar_tipo_movimiento():
-    tipo = input('Ingrese el tipo de movimiento: ')
-    try:
-        conector = conexion()
-        if conector:
-            cursor = conector.cursor()
-            query = "INSERT INTO Banco.tipo_movimiento (tipo) VALUES (%s)"
-            cursor.execute(query, (tipo,))
-            conector.commit()
-            print("Tipo de movimiento insertado correctamente.")
-            cursor.close()
-            conector.close()
-        else:
-            print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
-    except Exception as e:
-        print(f"Error al ejecutar la consulta: {e}")
-
-# Función para insertar movimiento en cuenta
-def insertar_movimiento_cuenta():
-    print('Estimado. Para que pueda funcionar esta opción, necesita primero crear los datos de tipo cuenta y los usuarios.')
-    regreso = input('Si necesita volver ingrese "si". En caso contrario, teclee cualquier cosa para continuar \n')
-
-    if regreso.lower() == 'si' or regreso.lower() == 's':
-        pass  
-    cuenta_id = int(input('Ingrese ID de la cuenta: '))
-    tipo_movimiento_id = int(input('Ingrese ID del tipo de movimiento: '))
-    monto = float(input('Ingrese el monto del movimiento: '))
-    try:
-        conector = conexion()
-        if conector:
-            cursor = conector.cursor()
-            query = "INSERT INTO Banco.movimientos_cuenta (cuenta, movimiento, monto) VALUES (%s, %s, %s)"
-            cursor.execute(query, (cuenta_id, tipo_movimiento_id, monto))
-            conector.commit()
-            print("Movimiento insertado correctamente.")
-            cursor.close()
-            conector.close()
-        else:
-            print("ERROR. Acción no ejecutada: No se pudo conectar a la base de datos.")
-    except Exception as e:
-        print(f"Error al ejecutar la consulta: {e}")
-
+            if opcion == '1':
+                tipo = input('Ingrese el tipo de usuario: ')
+                self.insertar_tipo_usuario(tipo)  
+            elif opcion == '2':
+                rut = input('Ingrese rut: ')
+                nombre = input('Ingrese nombre: ')			
+                apellido = input('Ingrese apellido: ')
+                correo = input('Ingrese correo: ')
+                usuario = input('Ingrese nombre de usuario: ')
+                tipo_usuario_id = int(input('Ingrese ID del tipo de usuario: '))
+                clave = input('Ingrese clave: ')
+                usuario = Usuario(rut, nombre, apellido, correo, usuario, tipo_usuario_id, clave)
+                usuario.insertar()
+            elif opcion == '3':
+                tipo = input('Ingrese el tipo de cuenta: ')
+                self.insertar_tipo_cuenta(tipo)  
+            elif opcion == '4':
+                usuario_id = int(input('Ingrese ID del usuario: '))
+                tipo_cuenta_id = int(input('Ingrese ID del tipo de cuenta: '))
+                saldo = float(input('Ingrese el saldo: '))
+                self.insertar_cuenta(usuario_id, tipo_cuenta_id, saldo)  
+            elif opcion == '5':
+                tipo = input('Ingrese el tipo de movimiento: ')
+                self.insertar_tipo_movimiento(tipo)  
+            elif opcion == '6':
+                cuenta_id = int(input('Ingrese ID de la cuenta: '))
+                tipo_movimiento_id = int(input('Ingrese ID del tipo de movimiento: '))
+                monto = float(input('Ingrese el monto del movimiento: '))
+                self.insertar_movimiento_cuenta(cuenta_id, tipo_movimiento_id, monto)  
+            elif opcion == '7':
+                print("Cerrando sección...")
+                time.sleep(1)
+                print("Que tenga un excelente día")
+                time.sleep(3)
+                break
+            else:
+                print("Opción no válida. Intenta de nuevo.")
 
 # Función principal para elegir la acción a realizar
-def Administrador():
-
-    time.sleep(5)
-    print("Inicio de seccion exitoso")
-    
-    while True:
-
-        print("\nSelecciona una opción:")
-        print("1. Añadir tipo de usuario")
-        print("2. Añadir usuario")
-        print("3. Añadir tipo de cuenta")
-        print("4. Añadir cuenta")
-        print("5. Añadir tipo de movimiento")
-        print("6. Añadir movimiento en cuenta")
-        print("7. Salir del sistema y cerrar seccion")
-        opcion = input("Ingrese porfavor: ")
-
-        if opcion == '1':
-            insertar_tipo_usuario()  
-        elif opcion == '2':
-            insertar_usuario()  
-        elif opcion == '3':
-            insertar_tipo_cuenta()  
-        elif opcion == '4':
-            insertar_cuenta()  
-        elif opcion == '5':
-            insertar_tipo_movimiento()  
-        elif opcion == '6':
-            insertar_movimiento_cuenta()  
-        elif opcion == '7':
-            print("Cerrando seccion...")
-            time.sleep(1)
-            print("Que tenga un exelente dia")
-            time.sleep(3)
-            break
-        else:
-            print("Opción no válida. Intenta de nuevo.")
-
-
-def usuario():
-
-    print("Inicio de seccion exitoso")
-    time.sleep(1)
-    print("Hola estimado usuario, Bienvenido al sistema")
-
-    while True:
-        print("\nSelecciona una opción:")
-        print("1. Crear usuario")
-        print("2. Crear cuenta")
-        print("3. Realizar Movimiento")
-        print("4. Salir del sistema y cerrar seccion")
-
-        opcion = input("Ingrese porfavor: ")
-
-        if opcion == '1':
-            #Añadir funcion
-            pass 
-        elif opcion == '2':
-            #Añadir funcion
-            pass
-        elif opcion == '3':
-            #Añadir Funcion
-            pass
-        elif opcion == '4':
-          
-            print("Cerrando seccion...")
-            time.sleep(1)
-            print("Que tenga un exelente dia")
-            time.sleep(3)
-            break
-        else:
-            print("Opción no válida. Intenta de nuevo.")
-
-        
-
-
-#Ejecucion de funciones
 def main():
-
     print("Hola estimado administrador, Bienvenido al sistema del banco ")
 
-    Seccion = input("Ingrese 1 para Iniciar seccion como administrador. Ingrese 2 para iniciar seccion como usuario. En caso cerrar el sistema ingrese cualquier cosa diferente")
+    Seccion = input("Ingrese 1 para Iniciar sección como administrador.\n Ingrese 2 para iniciar sección como usuario.\n En caso de cerrar el sistema ingrese cualquier cosa diferente\n")
 
     if Seccion == "1":
-        Administrador()
+        nombre_admin = input('Ingrese el nombre del administrador: ')
+        admin = Administrador(nombre_admin, 'Administrador')
+        admin.mostrar_menu()
     
     elif Seccion == "2":
-        #Usuario()
+        # Aquí se podría implementar la lógica de usuario
         pass
     else:
         print('Saliendo del sistema...')
